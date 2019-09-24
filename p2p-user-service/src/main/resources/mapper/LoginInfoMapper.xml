@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jizheping.mapper.LoginInfoMapper">
+    <select id="getUserInfoByUserName" resultType="LoginInfo">
+        select * from logininfo where username = #{username}
+    </select>
+
+    <insert id="insertLoginInfo" keyProperty="id" useGeneratedKeys="true" parameterType="LoginInfo">
+      insert into logininfo (username,password,state,usertype,admin)
+      values (#{username},#{password},#{state},#{usertype},#{admin})
+    </insert>
+
+    <select id="login" resultType="LoginInfo">
+        select * from logininfo where username = #{username}
+    </select>
+</mapper>

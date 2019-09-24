@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: p2p-user-service
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  datasource:
+    url: jdbc:mysql://localhost:3306/p2p?characterEncoding=utf-8&allowMultiQueries=true
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    druid:
+      initial-size: 1 #初始化连接数
+      min-idle: 1  #最小空闲连接数
+      max-active: 1   #最大活动连接数
+      test-on-borrow: true   #获取连接是测试是否可以使用
+      stat-view-servlet.allow: true
+mybatis:
+  type-aliases-package: com.jizheping.api.entity
+  mapper-locations: classpath:mapper/*Mapper.xml
+server:
+  port: 9001
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/

@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>蓝源Eloan-P2P平台->借款标</title>
+<link rel="stylesheet" href="/js/bootstrap-3.3.2-dist/css/bootstrap.css" type="text/css" />
+<link rel="stylesheet" href="/css/core.css" type="text/css" />
+<script type="text/javascript" src="/js/jquery/jquery-2.1.3.js"></script>
+<script type="text/javascript" src="/js/bootstrap-3.3.2-dist/js/bootstrap.js"></script>
+<script type="text/javascript" src="/js/jquery.bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/plugins/jquery-validation/jquery.validate.js"></script>
+<script type="text/javascript" src="/js/plugins/jquery-validation/localization/messages_zh.js"></script>
+<script type="text/javascript" src="/js/plugins/jquery.form.js"></script>
+<script type="text/javascript" src="/js/jquery.bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+<style type="text/css">
+	.el-login-form{
+		width:600px; 
+		margin-left:auto;
+		margin-right:auto;
+		margin-top: 20px;
+	}
+	.el-login-form .form-control{
+		width: 220px;
+		display: inline;
+	}
+</style>
+
+
+
+</head>
+<body>
+
+
+<div id="app" >
+	<div class="el-header">
+		<div class="container" style="position: relative;">
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="/index.do">首页</a></li>
+
+				<li><a class="el-current-user" href="/personal.do">
+					{{loginInfo.username}}
+				</a>
+				</li>
+				<li><a href="/recharge.do"> 账户充值 </a></li>
+				<li><a id="logout" href="javascript:void(0);"> 注销 </a></li>
+				<li><a href="#">帮助</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="navbar navbar-default el-navbar">
+		<div class="container">
+			<div class="navbar-header">
+				<a href="/">
+					<img alt="Brand" src="/images/logo.png">
+				</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li id="index"><a href="/index.html">首页</a></li>
+				<li id="invest"><a href="/invest.html">我要投资</a></li>
+				<li id="borrow"><a href="/borrow.html">我要借款</a></li>
+				<li id="account"><a href="/personal.html">个人中心</a></li>
+				<li><a href="#">新手指引</a></li>
+				<li><a href="#">关于我们</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- 网页内容 -->
+	<div class="container" style="min-height: 500px;">
+		<h4 class="page-title">投资列表</h4>
+		<form action="/invest_list.do" id="searchForm" method="POST">
+			<input type="hidden" name="currentPage" id="currentPage" value="1">
+			<input type="hidden" name="bidRequestState" id="bidRequestStateInput" value="-1">
+		</form>
+		<div style="margin: 20px 0px;">
+			<span class="text-muted">标的状态</span><div style="margin-left: 30px" class="btn-group" data-toggle="buttons">
+			<label class="btn btn-default active" @click="searchAll('all')">
+				<input type="radio" name="bidRequestStateRadio" value="-1" autocomplete="off" checked />&emsp;全部&emsp;
+			</label>
+			<label class="btn btn-default" @click="searchBiding('biding')">
+				<input type="radio" name="bidRequestStateRadio" value="1" autocomplete="off" />&emsp;招标中&emsp;
+			</label>
+			<label class="btn btn-default" @click="searchOver('over')">
+				<input type="radio" name="bidRequestStateRadio" value="8" autocomplete="off" />&emsp;已完成&emsp;
+			</label>
+		</div>
+		</div>
+
+		<table class="table el-table table-hover">
+			<thead id="gridHead">
+			<tr>
+				<th>借款人</th>
+				<th width="180px">借款标题</th>
+				<th>年利率</th>
+				<th>金额</th>
+				<th>还款方式</th>
+				<th>进度</th>
+				<th width="80px">操作</th>
+			</tr>
+			</thead>
+			<tbody id="gridBody">
+				<tr v-for="bidRequest in pageResult.result">
+					<th v-text="bidRequest.createUser.username"></th>
+					<th width="180px"><a :href="'http://www.p2p.com/bid_request_detail.html?id='+bidRequest.id" v-text="bidRequest.title"></a></th>
+					<th v-text="bidRequest.currentRate"></th>
+					<th v-text="bidRequest.bidRequestAmount"></th>
+					<th v-text="bidRequest.returnTypeDisplay"></th>
+					<th>{{bidRequest.persent*100}}%</th>
+					<th width="80px"><a :href="'http://www.p2p.com/bid_request_detail.html?id='+bidRequest.id">查看</a></th>
+				</tr>
+			</tbody>
+		</table>
+		<div style="text-align: center;">
+			<nav aria-label="Page navigation">
+				<ul class="pagination">
+					<li :class="{'disabled':pageResult.currentPage == 1}">
+						<a href="#" aria-label="Previous">
+							<span aria-hidden="true" @click="showPage(pageResult.prev)">&laquo;</span>
+						</a>
+					</li>
+					<li v-for="index in pageResult.totalPage" @click="showPage(index)" v-bind:class="{'active': pageResult.currentPage == index}">
+						<a href="#" aria-label="Previous">
+							<span aria-hidden="true">{{index}}</span>
+						</a>
+					</li>
+					<li :class="{'disabled':pageResult.totalPage == pageResult.currentPage}">
+						<a href="#" aria-label="Previous">
+							<span aria-hidden="true" @click="showPage(pageResult.next)">&raquo;</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+
+<!-- 网页版权 -->
+<div class="container-foot-2">
+	<div class="context">
+		<div class="left">
+			<p>版权所有：&emsp;2018xxx科技有限公司</p>
+			<p>地&emsp;&emsp;址：&emsp;上海市奉贤区xxx街道xx号</p>
+			<p>电&emsp;&emsp;话：021-xxxxxx&emsp;&emsp;
+				邮箱：&emsp;xxx@163.com</p>
+			<p>
+				<a href="http://www.baidu.com" style="color: #ffffff">ICP备案
+					：沪ICP备字521</a>
+			</p>
+		</div>
+		<div class="right">
+			<a target="_blank" href="https://www.infoq.cn/"><img
+					src="/images/sina.png"></a>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+	var vue = new Vue({
+		el:"#app",
+		data:{
+		    loginInfo:"",  //账号信息
+			userInfo:"",  //用户信息
+			pageResult:{}, //分页查询结果
+			queryObject: {
+		        currentPage: 1,
+				pageSize: 5,
+				state: 0,
+				bidRequestStates: [1,3,4,5,6]
+			}//分页查询条件
+		},
+		methods:{
+			//加载账户信息
+		    loadAccount:function (userId) {
+                //发送ajax请求
+                //axios发送请求时携带cookie
+                axios.defaults.withCredentials=true;
+                axios({
+                    method:"GET",
+                    url:"http://api.p2p.com/account/account/detail",
+					params:{userId:userId}
+                }).then(function(resp){
+                    console.log(resp.data);
+                    var resultVo = resp.data;
+                    if(resultVo.code == 0){
+                        //账户信息
+                        vue.account = resultVo.data;
+
+                    }else{
+                        $.messager.alert("提示",resultVo.msg);
+                        window.location.href = "http://www.p2p.com/login.html";
+                    }
+
+                });
+            },
+            //加载用户信息
+			loadUserInfo:function (userId) {
+                //发送ajax请求
+                //axios发送请求时携带cookie
+                axios.defaults.withCredentials=true;
+                axios({
+                    method:"GET",
+                    url:"http://api.p2p.com/user/personal/getUserMessage",
+                    params:{userId:userId}
+                }).then(function(resp){
+                    console.log(resp.data);
+                    var resultVo = resp.data;
+                    if(resultVo.code == 0){
+                        //用户信息
+                        vue.userInfo = resultVo.data;
+
+                        //判断当前用户有无借款条件
+                        var passBorrow = (vue.userInfo.baseInfo &&vue.userInfo.realAuth
+                            &&(vue.userInfo.authScore>=30) && vue.userInfo.vedioAuth );
+
+                        if(passBorrow == false){
+							alert("当前用户没有达到借款条件!");
+                            window.location.href = "http://www.p2p.com/borrow.html";
+                        }
+
+
+                    }else{
+                        $.messager.alert("提示",resultVo.msg);
+                        window.location.href = "http://www.p2p.com/login.html";
+                    }
+
+                });
+            },
+
+			showPage:function(n){
+		        vue.queryObject.currentPage = n;
+		        vue.searchList();
+			},
+
+			search:function(message){
+                if(message == 'all'){
+                    vue.searchAll();
+				}else if(message == 'biding'){
+                    vue.searchBiding();
+				}else if(message == 'over'){
+                    vue.searchOver();
+				}
+			},
+
+			searchAll:function(){
+                vue.queryObject.bidRequestStates = [1,3,4,5,6];
+                vue.searchList();
+			},
+
+			searchBiding:function(){
+                vue.queryObject.bidRequestStates = [1];
+                vue.searchList();
+			},
+
+			searchOver:function(){
+                vue.queryObject.bidRequestStates = [3,4,5,6];
+                vue.searchList();
+			},
+
+			searchList:function(){
+                axios.defaults.withCredentials=true;
+                var data = JSON.stringify(vue.queryObject);
+                axios.post(
+					"http://api.p2p.com/p2p-bid-service/bid/bidrequest_list_borrow",
+					data,
+					{
+					    headers:{
+					        "Content-type":"application/json"
+						}
+					}
+				).then(function (resp) {
+					console.log(resp.data);
+					var resultVo = resp.data;
+					if(resultVo.code == 0){
+					    vue.pageResult = resultVo.data;
+					}else{
+					    $.messagers.alert("提示",resultVo.msg);
+					    window.location.href = "http://www.p2p.com/login.html"
+					}
+                })
+			}
+		},
+		mounted:function () {
+            //发送ajax请求
+            //axios发送请求时携带cookie
+            axios.defaults.withCredentials=true;
+            axios({
+                method:"POST",
+                url:"http://api.p2p.com/user/user/checkLogin"
+            }).then(function(resp){
+                console.log(resp.data);
+                var resultVo = resp.data;
+                if(resultVo.code == 0){
+                    //账号信息
+                    vue.loginInfo = resultVo.data;
+					vue.loadAccount(vue.loginInfo.id);
+					vue.loadUserInfo(vue.loginInfo.id);
+					vue.search('all');
+                }else{
+                    $.messager.alert("提示",resultVo.msg);
+                    window.location.href = "http://www.p2p.com/login.html";
+                }
+
+            });
+        }
+
+	});
+
+</script>

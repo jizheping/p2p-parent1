@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jizheping.mapper.BidRequestMapper">
+    <insert id="addBitRequest" useGeneratedKeys="true" keyProperty="id">
+      insert into bidrequest(version,bidRequestType,bidRequestState,
+      bidRequestAmount,currentRate,monthes2Return,bidCount,totalRewardAmount,currentSum,
+      title,description,disableDate,createuser_id,disableDays,minBidAmount,
+      applyTime,publishTime,returnType) values (0,#{bidRequestType},#{bidRequestState},#{bidRequestAmount},
+      #{currentRate},#{monthes2Return},#{bidCount},#{totalRewardAmount},#{currentSum},#{title},
+      #{description},#{disableDate},#{createUser.id},#{disableDays},#{minBidAmount},
+      #{applyDate},#{publishDate},#{returnType})</insert>
+
+    <select id="selectBidRequestByCondition" resultMap="bidRequestResultMap">
+    select
+      b.id, b.version, b.bidRequestType, b.bidRequestState, b.bidRequestAmount,b.currentRate,
+      b.monthes2Return, b.bidCount, b.totalRewardAmount, b.currentSum, b.title, b.description,
+      b.disableDate, b.createuser_id, b.disableDays, b.minBidAmount, b.applyTime,b.publishTime, b.returnType ,
+      g.id as g_id,
+      g.username as g_username
+    from
+      bidrequest b
+    left join logininfo g on b.createuser_id = g.id
+    <where>
+      <if test="qo.state != -1">
+        b.bidRequestState in
+        <foreach collection="qo.bidRequestStates" open="(" separator="," close=")" item="bidRequestState">
+          #{bidRequestState}
+        </foreach>
+      </if>
+
+      <if test="qo.beginDate != null">
+        and b.applyTime >= #{qo.beginDate}
+      </if>
+
+      <if test="qo.endDate != null">
+        and b.applyTime &lt;= #{qo.endDate}
+      </if>
+
+      <if test="qo.orderBy != null">
+        order by ${qo.orderBy}
+        <if test="qo.orderType != null">
+          ${qo.orderType}
+        </if>
+      </if>
+    </where>
+  </select>
+  
+    <resultMap id="bidRequestResultMap" type="BidRequest">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="bidRequestType" property="bidRequestType" />
+    <result column="bidRequestState" property="bidRequestState" />
+    <result column="bidRequestAmount" property="bidRequestAmount" />
+    <result column="currentRate" property="currentRate" />
+    <result column="monthes2Return" property="monthes2Return" />
+    <result column="bidCount" property="bidCount" />
+    <result column="totalRewardAmount" property="totalRewardAmount" />
+    <result column="currentSum" property="currentSum" />
+    <result column="title" property="title" />
+    <result column="description" property="description" />
+    <result column="disableDate" property="disableDate" />
+    <result column="disableDays" property="disableDays" />
+    <result column="minBidAmount" property="minBidAmount" />
+    <result column="applyTime" property="applyDate" />
+    <result column="publishTime" property="publishDate" />
+    <result column="returnType" property="returnType" jdbcType="TINYINT" />
+    <association property="createUser" javaType="LoginInfo" columnPrefix="g_">
+      <id column="id" property="id"></id>
+      <result column="username" property="username"></result>
+    </association>
+  </resultMap>
+
+    <update id="updateBidRequest" parameterType="BidRequest">
+      update bidrequest
+      set version=version+1,
+      bidRequestType=#{bidRequestType},
+      bidRequestState=#{bidRequestState},
+      bidRequestAmount=#{bidRequestAmount},
+      currentRate=#{currentRate},
+      monthes2Return=#{monthes2Return},
+      bidCount=#{bidCount},
+      totalRewardAmount=#{totalRewardAmount},
+      currentSum=#{currentSum},
+      title=#{title},
+      description=#{description},
+      disableDate=#{disableDate},
+      createuser_id=#{createUser.id},
+      disableDays=#{disableDays},
+      minBidAmount=#{minBidAmount},
+      applyTime=#{applyDate},
+      publishTime=#{publishDate},
+      returnType=#{returnType}
+      where id=#{id} and version=#{version}
+    </update>
+
+    <select id="selectBidRequestById" resultMap="bidRequestResultMap">
+    select
+      b.id, b.version, b.bidRequestType, b.bidRequestState, b.bidRequestAmount,b.currentRate,
+      b.monthes2Return, b.bidCount, b.totalRewardAmount, b.currentSum, b.title, b.description,
+      b.disableDate, b.createuser_id, b.disableDays, b.minBidAmount, b.applyTime,b.publishTime, b.returnType ,
+      g.id as g_id,
+      g.username as g_username
+    from
+      bidrequest b
+        left join logininfo g on b.createuser_id = g.id
+    where b.id=#{id}
+  </select>
+</mapper>

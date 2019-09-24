@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jizheping.mapper.UserInfoMapper">
+    <insert id="insertUserInfo" parameterType="UserInfo" keyProperty="id">
+      insert into userinfo (id,version,bitState,realName,authScore,email,realauthId,idNumber,phoneNumber,
+       incomeGrade_id,marriage_id,kidCount_id,educationBackground_id,houseCondition_id)
+       values (#{id},0,#{bitState,jdbcType=BIGINT},#{realName,jdbcType=VARCHAR},
+               #{authScore},#{email},#{realauthId,jdbcType=BIGINT},
+               #{idNumber,jdbcType=VARCHAR},#{phoneNumber,jdbcType=VARCHAR},#{incomeGrade.id,jdbcType=BIGINT},
+               #{marriage.id,jdbcType=BIGINT},#{kidCount.id,jdbcType=BIGINT},
+               #{educationBackground.id,jdbcType=BIGINT},
+               #{houseCondition.id,jdbcType=BIGINT})
+    </insert>
+
+    <select id="selectUserInfoById" resultMap="userInfoMap">
+      select id,version,bitState,realName,idNumber,phoneNumber,
+             incomeGrade_id,marriage_id,authScore,realauthId,email,kidCount_id,
+             educationBackground_id,houseCondition_id
+             from userinfo
+             where id = #{id,jdbcType=BIGINT}
+    </select>
+    
+    <resultMap id="userInfoMap" type="UserInfo">
+        <id column="id" property="id" jdbcType="BIGINT"></id>
+        <result column="version" property="version" jdbcType="INTEGER"></result>
+        <result column="bitState" property="bitState" jdbcType="BIGINT"></result>
+        <result column="realName" property="realName" jdbcType="VARCHAR"></result>
+        <result column="idNumber" property="idNumber" jdbcType="VARCHAR"></result>
+        <result column="phoneNumber" property="phoneNumber" jdbcType="VARCHAR"></result>
+        <result column="authScore" property="authScore"></result>
+        <result column="email" property="email"></result>
+        <result column="realauthId" property="realauthId"></result>
+        <!--收入水平-->
+        <association property="incomeGrade" javaType="SystemDictionaryItem" column="incomeGrade_id" select="com.jizheping.mapper.SystemDictionaryItemMapper.selectById"></association>
+        <!--婚姻状况-->
+        <association property="marriage" javaType="SystemDictionaryItem" column="marriage_id" select="com.jizheping.mapper.SystemDictionaryItemMapper.selectById"></association>
+        <!--子女情况-->
+        <association property="kidCount" javaType="SystemDictionaryItem" column="kidCount_id" select="com.jizheping.mapper.SystemDictionaryItemMapper.selectById"></association>
+        <!--受教育情况-->
+        <association property="educationBackground" javaType="SystemDictionaryItem" column="educationBackground_id" select="com.jizheping.mapper.SystemDictionaryItemMapper.selectById"></association>
+        <!--住房条件-->
+        <association property="houseCondition" javaType="SystemDictionaryItem" column="houseCondition_id" select="com.jizheping.mapper.SystemDictionaryItemMapper.selectById"></association>
+    </resultMap>
+</mapper>

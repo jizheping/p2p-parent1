@@ -1,0 +1,25 @@
+server:
+  port: 8100
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
+spring:
+  application:
+    name: p2p-gateway-zuul
+zuul:
+  routes:
+    p2p-account-service:
+      serviceId: p2p-account-service
+      path: /account/**
+    p2p-user-service:
+      serviceId: p2p-user-service
+      path: /user/**
+    p2p-bid-service:
+      serviceId: p2p-bid-service
+      path: /bid/**
+    p2p-manager:
+      serviceId: p2p-manager
+      path: /manager/**
+  sensitive-headers:
+  add-host-header: true

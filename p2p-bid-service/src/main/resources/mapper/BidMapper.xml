@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jizheping.mapper.BidMapper">
+    <resultMap id="BaseResultMap" type="com.jizheping.api.entity.Bid" >
+        <id property="id" column="id"/>
+        <id property="actualRate" column="actualRate"/>
+        <id property="availableAmount" column="availableAmount"/>
+        <id property="bidRequestId" column="bidrequest_id"/>
+        <id property="bidTime" column="bidTime"/>
+        <id property="bidRequestTitle" column="bidRequestTitle"/>
+        <association property="bidUser" javaType="LoginInfo" columnPrefix="l_">
+            <id property="id" column="id"/>
+            <result property="username" column="username"/>
+        </association>
+    </resultMap>
+
+    <select id="getBidListByBidRequestId" resultMap="BaseResultMap">
+        select b.id,b.actualRate,b.bidTime,b.bidRequestTitle,b.availableAmount,b.bidrequest_id,
+               b.bidUser_id,l.id as l_id,l.username as l_username
+        from bid b
+                 left join logininfo l on b.bidUser_id=l.id
+        where b.bidrequest_id=#{id}
+    </select>
+
+    <insert id="insertBid" parameterType="com.jizheping.api.entity.Bid" useGeneratedKeys="true" keyColumn="id">
+        insert into bid(actualRate,availableAmount,bidrequest_id,bidTime,bidRequestTitle,bidUser_id)
+        values(#{actualRate},#{availableAmount},#{bidRequestId},#{bidTime},#{bidRequestTitle},#{bidUser.id})
+    </insert>
+</mapper>

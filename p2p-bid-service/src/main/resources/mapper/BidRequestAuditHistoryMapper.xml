@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jizheping.mapper.BidRequestAuditHistoryMapper">
+    <insert id="saveBidRequestAuditHistory" parameterType="BidRequestAuditHistory">
+      insert into bidrequestaudithistory
+          (state,remark,auditTime,applyTime,auditor_id,applier_id,bidRequestId,auditType)
+          values (#{state},#{remark},now(),#{applyTime},#{auditor.id},#{applier.id},
+                  #{bidRequestId},#{auditType})
+    </insert>
+</mapper>
