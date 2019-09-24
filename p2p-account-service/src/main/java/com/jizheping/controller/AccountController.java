@@ -1,9 +1,7 @@
 package com.jizheping.controller;
 
-import com.jizheping.api.entity.Account;
-import com.jizheping.api.entity.Bid;
-import com.jizheping.api.entity.BidRequest;
-import com.jizheping.api.entity.PaymentSchedule;
+import com.jizheping.api.entity.*;
+import com.jizheping.api.util.BidConst;
 import com.jizheping.api.vo.CodeMsg;
 import com.jizheping.api.vo.ResultVO;
 import com.jizheping.service.AccountService;
@@ -11,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.interfaces.ECPrivateKey;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +53,13 @@ public class AccountController {
         //调用业务层方法进行查询
         try {
             Account account = accountService.selectAccountById(id);
+
+            account.setUnReturnAmount(account.getUnReturnAmount().divide(BigDecimal.valueOf(1), BidConst.SCALE_DISPLAY, RoundingMode.HALF_UP));
+            account.setUsableAmount(account.getUsableAmount().divide(BigDecimal.valueOf(1), BidConst.SCALE_DISPLAY, RoundingMode.HALF_UP));
+            account.setRemainBorrowLimit(account.getRemainBorrowLimit().divide(BigDecimal.valueOf(1), BidConst.SCALE_DISPLAY, RoundingMode.HALF_UP));
+            account.setUnReceivePrincipal(account.getUnReceivePrincipal().divide(BigDecimal.valueOf(1), BidConst.SCALE_DISPLAY, RoundingMode.HALF_UP));
+            account.setUnReceiveInterest(account.getUnReceiveInterest().divide(BigDecimal.valueOf(1), BidConst.SCALE_DISPLAY, RoundingMode.HALF_UP));
+            account.setFreezedAmount(account.getFreezedAmount().divide(BigDecimal.valueOf(1), BidConst.SCALE_DISPLAY, RoundingMode.HALF_UP));
 
             //判断查询出的对象是否为空，判断数据库中是否拥有附和添加的信息
             if(account == null){
@@ -114,6 +120,7 @@ public class AccountController {
         }
     }
 
+    //加载还款列表
     @RequestMapping("/loadRefundList")
     public ResultVO loadRefundList(Long id){
         try {
@@ -127,6 +134,7 @@ public class AccountController {
         }
     }
 
+    //还款
     @RequestMapping("/refundMoney")
     public ResultVO<Boolean> refundMoney(Long id){
         try {
@@ -137,6 +145,19 @@ public class AccountController {
             e.printStackTrace();
 
             return ResultVO.success(false);
+        }
+    }
+
+    @RequestMapping("/loadReturnList")
+    public ResultVO loadReturnList(Long id){
+        try {
+            List<PaymentScheduleDetail> list = accountService.loadReturnList(id);
+
+            return ResultVO.success(list);
+        }catch (Exception e){
+            e.printStackTrace();
+
+            return ResultVO.success(null);
         }
     }
 }

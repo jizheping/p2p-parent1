@@ -15,4 +15,7 @@ public interface BidRequestMapper {
     int updateBidRequest(BidRequest bidRequest);
 
     BidRequest selectBidRequestById(Long bidRequestId);
+
+    //查询我的借款列表信息
+    List<BidRequest> getBidRequestListByCreateUserId(Long id);
 }

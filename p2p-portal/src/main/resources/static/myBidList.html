@@ -73,88 +73,52 @@
 
 	<!-- 网页内容 -->
 	<div class="container">
+		<div class="row">
+			<!--导航菜单-->
+			<div class="col-sm-3">
+			</div>
 			<!-- 功能页面 -->
 			<div class="col-sm-9">
-				<form action="/loadRefundList" name="searchForm" id="searchForm" class="form-inline">
+				<form action="/bid_list.do" name="searchForm" id="searchForm" class="form-inline" method="post">
 					<input type="hidden" id="currentPage" name="currentPage" value="" />
 					<div class="form-group">
 						<label>时间范围</label>
-						<input type="text" class="form-control beginDate" name="beginDate" @click="WdatePicker()" value=""/>
+						<input type="text" class="form-control beginDate" name="beginDate" value=''/>
 					</div>
 					<div class="form-group">
 						<label></label>
-						<input type="text" class="form-control endDate" name="endDate" @click="WdatePicker()" value=""/>
+						<input type="text" class="form-control endDate" name="endDate" value=''/>
 					</div>
 					<div class="form-group">
 						<label>状态</label>
-						<select class="form-control" name="state">
+						<select class="form-control" name="bidRequestState">
 							<option value="-1">全部</option>
-							<option value="0">待还款</option>
-							<option value="1">已还款</option>
-							<option value="2">逾期</option>
 						</select>
-						<!--<script type="text/javascript">
-                            $("[name=state] option[value='${(q.state)!''}']").attr("selected","selected");
-						</script>-->
 					</div>
 					<div class="form-group">
 						<button id="query" class="btn btn-success"><i class="icon-search"></i> 查询</button>
 					</div>
 				</form>
-				<div class="panel panel-default">
+
+				<div class="panel panel-default" style="margin-top: 20px;">
 					<div class="panel-heading">
-						<span class="pull-left" style="line-height: 35px;">还款明细</span>
-
-						<a id="exportBtn" class="pull-right btn btn-primary btn-sm" href="javascript:void(0)">
-							导出数据
-						</a>
-
-						<a class="pull-right btn btn-danger btn-sm" href="/recharge.do">
-							账户充值
-						</a>
-						<div class="clearfix"></div>
+						我的投资
 					</div>
-					<input type="hidden" id="useableAmount" value="${account.usableAmount?string('0.##')}">
-					<table class="table">
+					<table class="table table-striped">
 						<thead>
 						<tr>
-							<th>还款人</th>
-							<th>还款金额</th>
-							<th>还款本金</th>
-							<th>还款利息</th>
-							<th>还款期数</th>
-							<td>还款截至日期</td>
-							<th>还款日期</th>
-							<!--<th>还款状态</th>-->
+							<th>借款标名称</th>
+							<th>投资金额</th>
+							<th>年化利率</th>
+							<th>投标时间</th>
 						</tr>
 						</thead>
 						<tbody>
-						<tr v-for="refund in refundList">
-							<td><a href="/borrow_info.do?id=${data.bidRequestId}">{{refund.fromLogininfo.username}}</a></td>
-							<td>{{refund.totalAmount}}元</td>
-							<td>{{refund.principal}}元</td>
-							<td>{{refund.interest}}元</td>
-							<td>{{refund.monthIndex}}期</td>
-							<td>{{refund.deadline}}</td>
-							<td>
-								<span v-if="refund.payDate != null">
-									{{refund.payDate}}
-								</span>
-								<span v-if="refund.payDate == null">
-									待还
-								</span>
-							</td>
-							<!--<td>
-								<span v-if="refund.state == 0">
-									<a class="btn btn-success return_money" @click="refundMoney(refund.id,refund.totalAmount)">立刻还款</a>
-								</span>
-								<span v-if="refund.state == 1">
-									已还款
-								</span>
-								<span v-if="refund.state == 2">
-									逾期
-								</span>
-							</td>-->
+						<tr v-for="bid in bidList">
+							<td><a href="/borrow_info.do?id=${data.bidRequestId}">{{bid.bidRequestTitle}}</a></td>
+							<td>{{bid.availableAmount}}</td>
+							<td>{{bid.actualRate}}%</td>
+							<td>{{bid.bidTime}}</td>
 						</tr>
 						</tbody>
 					</table>
@@ -199,7 +163,7 @@
             loginInfo:"",  //账号信息
             userInfo:"",  //用户信息
             account:"",    //账户信息
-            refundList: {}    //还款计划列表
+            bidList: {}    //还款计划列表
         },
         methods:{
             //加载账户信息
@@ -247,17 +211,17 @@
 
                 });
             },
-			loadRefund:function (id) {
+			loadMyBidList:function (id) {
                 axios({
                     method:"GET",
-                    url:"http://api.p2p.com/account/account/loadReturnList",
+                    url:"http://api.p2p.com/bid/bid/getMyBidList",
                     params:{id:id}
                 }).then(function(resp){
                     console.log(resp.data);
                     var resultVo = resp.data;
                     if(resultVo.code == 0){
                         //用户信息
-                        vue.refundList = resultVo.data;
+                        vue.bidList = resultVo.data;
 
                     }else{
                         $.messager.alert("提示",resultVo.msg);
@@ -282,7 +246,7 @@
                     vue.loginInfo = resultVo.data;
                     vue.loadAccount(vue.loginInfo.id);
                     vue.loadUserInfo(vue.loginInfo.id);
-                    vue.loadRefund(vue.loginInfo.id);
+                    vue.loadMyBidList(vue.loginInfo.id);
                 }else{
                     $.messager.alert("提示",resultVo.msg);
                     window.location.href = "http://www.p2p.com/login.html";

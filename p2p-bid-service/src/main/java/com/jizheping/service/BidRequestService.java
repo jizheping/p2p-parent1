@@ -1,5 +1,6 @@
 package com.jizheping.service;
 
+import com.jizheping.api.entity.Bid;
 import com.jizheping.api.entity.BidRequest;
 import com.jizheping.api.entity.BidRequestAuditHistory;
 import com.jizheping.api.vo.BidRequestAuditQueryObject;
@@ -25,4 +26,6 @@ public interface BidRequestService {
     void doAuditForTwo(BidRequestAuditHistory bidRequestAuditHistory) throws ParseException;
 
     void updateBidRequest(BidRequest bidRequest);
+
+    List<BidRequest> getBidRequestListByCreateUserId(Long id);
 }

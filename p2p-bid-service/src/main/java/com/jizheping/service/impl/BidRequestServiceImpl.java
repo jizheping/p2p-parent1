@@ -269,4 +269,16 @@ public class BidRequestServiceImpl implements BidRequestService {
     public void updateBidRequest(BidRequest bidRequest){
         bidRequestMapper.updateBidRequest(bidRequest);
     }
+
+    @Override
+    public List<BidRequest> getBidRequestListByCreateUserId(Long id) {
+        List<BidRequest> list = bidRequestMapper.getBidRequestListByCreateUserId(id);
+
+        for(BidRequest bidRequest : list){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            bidRequest.setApplyTime(simpleDateFormat.format(bidRequest.getApplyDate()));
+        }
+
+        return list;
+    }
 }

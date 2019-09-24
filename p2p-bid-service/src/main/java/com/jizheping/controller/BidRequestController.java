@@ -1,9 +1,6 @@
 package com.jizheping.controller;
 
-import com.jizheping.api.entity.BidRequest;
-import com.jizheping.api.entity.BidRequestAuditHistory;
-import com.jizheping.api.entity.LoginInfo;
-import com.jizheping.api.entity.PaymentSchedule;
+import com.jizheping.api.entity.*;
 import com.jizheping.api.util.BidConst;
 import com.jizheping.api.vo.BidRequestAuditQueryObject;
 import com.jizheping.api.vo.PageResult;
@@ -16,6 +13,7 @@ import com.jizheping.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -200,6 +198,34 @@ public class BidRequestController {
             loanService.moneyBack(bidRequestId);
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    //查询我的投标列表
+    @RequestMapping("/getMyBidList")
+    public ResultVO getMyBidList(Long id){
+        try {
+            List<Bid> list = bidService.getBidListByLoginInfoId(id);
+
+            return ResultVO.success(list);
+        }catch (Exception e){
+            e.printStackTrace();
+
+            return ResultVO.success(null);
+        }
+    }
+
+    //查询我的借款列表
+    @RequestMapping("/loadMyBidRequestList")
+    public ResultVO loadMyBidRequestList(Long id){
+        try {
+            List<BidRequest> list = bidRequestService.getBidRequestListByCreateUserId(id);
+
+            return ResultVO.success(list);
+        }catch (Exception e){
+            e.printStackTrace();
+
+            return ResultVO.success(null);
         }
     }
 }

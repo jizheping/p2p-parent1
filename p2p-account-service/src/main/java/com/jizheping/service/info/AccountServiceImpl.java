@@ -331,21 +331,26 @@ public class AccountServiceImpl implements AccountService {
             //创建新的动账记录信息，用于向动账记录表中添加
             AccountFlow accountFlow1 = new AccountFlow();
             //设置动账类型
-            accountFlow.setAccountActionType(BidConst.ACCOUNT_ACTIONTYPE_CALLBACK_MONEY);
+            accountFlow1.setAccountActionType(BidConst.ACCOUNT_ACTIONTYPE_CALLBACK_MONEY);
             //设置动账金额
-            accountFlow.setAmount(paymentSchedule.getTotalAmount());
+            accountFlow1.setAmount(paymentSchedule.getTotalAmount());
             //设置动账说明
-            accountFlow.setNote("回款");
+            accountFlow1.setNote("回款");
             //设置动账后的可用金额
-            accountFlow.setUseableAmount(account1.getUsableAmount().add(paymentSchedule.getTotalAmount()));
+            accountFlow1.setUseableAmount(account1.getUsableAmount().add(paymentSchedule.getTotalAmount()));
             //设置动账后的冻结金额
-            accountFlow.setFreezedAmount(account1.getFreezedAmount());
+            accountFlow1.setFreezedAmount(account1.getFreezedAmount());
             //设置动账时间
-            accountFlow.setActionTime(date);
+            accountFlow1.setActionTime(date);
             //设置所属账户id
-            accountFlow.setAccountId(account1.getId());
+            accountFlow1.setAccountId(account1.getId());
             //将数据添加到数据库
-            accountFlowDao.save(accountFlow);
+            accountFlowDao.save(accountFlow1);
         }
+    }
+
+    @Override
+    public List<PaymentScheduleDetail> loadReturnList(Long id) {
+        return paymentScheduleDetailMapper.selectByLoginInfoId(id);
     }
 }

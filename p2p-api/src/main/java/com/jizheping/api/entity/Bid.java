@@ -16,7 +16,7 @@ public class Bid {
     private Long bidRequestId;
     private String bidRequestTitle;
     private LoginInfo bidUser;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date bidTime;
 
     private int bidRequestState;

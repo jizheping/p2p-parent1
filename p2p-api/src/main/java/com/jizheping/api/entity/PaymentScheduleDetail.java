@@ -18,10 +18,10 @@ public class PaymentScheduleDetail {
     private BigDecimal principal = BidConst.ZERO; // 本期应还款本金
     private BigDecimal interest = BidConst.ZERO; // 本期应还款利息
     private int monthIndex; // 第几期（即第几个月）
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date deadline; // 本期还款截止时间
     private Long bidRequestId; // 所属哪个借款
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:SS")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date payDate; // 实际付款日期
     private int returnType; // 还款方式
     private Long paymentScheduleId; // 所属还款计划

@@ -12,4 +12,6 @@ public interface PaymentScheduleDetailMapper {
     List<PaymentScheduleDetail> selectByPaymentSchedule(Long id);
 
     void updateByPrimaryKey(PaymentScheduleDetail paymentScheduleDetail);
+
+    List<PaymentScheduleDetail> selectByLoginInfoId(Long id);
 }

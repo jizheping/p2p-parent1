@@ -21,4 +21,9 @@ public class BidServiceImpl implements BidService {
 
         return ResultVO.success(list);
     }
+
+    @Override
+    public List<Bid> getBidListByLoginInfoId(Long id) {
+        return bidMapper.getBidListByLoginInfoId(id);
+    }
 }

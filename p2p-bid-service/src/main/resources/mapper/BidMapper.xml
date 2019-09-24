@@ -26,4 +26,12 @@
         insert into bid(actualRate,availableAmount,bidrequest_id,bidTime,bidRequestTitle,bidUser_id)
         values(#{actualRate},#{availableAmount},#{bidRequestId},#{bidTime},#{bidRequestTitle},#{bidUser.id})
     </insert>
+
+    <select id="getBidListByLoginInfoId" resultMap="BaseResultMap">
+        select b.id,b.actualRate,b.bidTime,b.bidRequestTitle,b.availableAmount,b.bidrequest_id,
+               b.bidUser_id,l.id as l_id,l.username as l_username
+        from bid b
+                 left join logininfo l on b.bidUser_id=l.id
+        where b.bidUser_id=#{id}
+    </select>
 </mapper>

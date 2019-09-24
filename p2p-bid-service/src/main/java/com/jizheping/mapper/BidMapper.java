@@ -8,4 +8,6 @@ public interface BidMapper {
     List<Bid> getBidListByBidRequestId(Long id);
 
     void insertBid(Bid bid);
+
+    List<Bid> getBidListByLoginInfoId(Long id);
 }

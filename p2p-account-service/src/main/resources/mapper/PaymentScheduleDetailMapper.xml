@@ -67,5 +67,11 @@
         toLogininfo_id = #{toLogininfoId}
     where id = #{id}
   </update>
+
+  <select id="selectByLoginInfoId" resultMap="BaseResultMap">
+      select <include refid="base_column" />
+      from paymentscheduledetail  pd join logininfo fi ON  pd.fromLogininfo_id = fi.id
+      where pd.toLogininfo_id = #{id}
+  </select>
  
 </mapper>

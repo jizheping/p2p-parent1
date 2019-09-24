@@ -118,33 +118,24 @@
 					<table class="table">
 						<thead>
 						<tr>
-							<th>还款人</th>
+							<th>借款</th>
 							<th>还款金额</th>
 							<th>还款本金</th>
 							<th>还款利息</th>
 							<th>还款期数</th>
-							<td>还款截至日期</td>
-							<th>还款日期</th>
-							<!--<th>还款状态</th>-->
+							<th>还款期限</th>
+							<th>还款状态</th>
 						</tr>
 						</thead>
 						<tbody>
 						<tr v-for="refund in refundList">
-							<td><a href="/borrow_info.do?id=${data.bidRequestId}">{{refund.fromLogininfo.username}}</a></td>
+							<td><a href="/borrow_info.do?id=${data.bidRequestId}">{{refund.bidRequestTitle}}</a></td>
 							<td>{{refund.totalAmount}}元</td>
 							<td>{{refund.principal}}元</td>
 							<td>{{refund.interest}}元</td>
 							<td>{{refund.monthIndex}}期</td>
-							<td>{{refund.deadline}}</td>
+							<td>{{refund.deadLine}}</td>
 							<td>
-								<span v-if="refund.payDate != null">
-									{{refund.payDate}}
-								</span>
-								<span v-if="refund.payDate == null">
-									待还
-								</span>
-							</td>
-							<!--<td>
 								<span v-if="refund.state == 0">
 									<a class="btn btn-success return_money" @click="refundMoney(refund.id,refund.totalAmount)">立刻还款</a>
 								</span>
@@ -154,7 +145,7 @@
 								<span v-if="refund.state == 2">
 									逾期
 								</span>
-							</td>-->
+							</td>
 						</tr>
 						</tbody>
 					</table>
@@ -250,7 +241,7 @@
 			loadRefund:function (id) {
                 axios({
                     method:"GET",
-                    url:"http://api.p2p.com/account/account/loadReturnList",
+                    url:"http://api.p2p.com/account/account/loadRefundList",
                     params:{id:id}
                 }).then(function(resp){
                     console.log(resp.data);
@@ -265,6 +256,25 @@
                     }
 
                 });
+			},
+            refundMoney:function(id,totalAmount){
+                if(totalAmount > vue.account.usableAmount){
+                    alert("可用余额不足,请充值");
+                }else{
+                    axios({
+                        method:"GET",
+                        url:"http://api.p2p.com/account/account/refundMoney",
+                        params:{id:id}
+                    }).then(function(obj){
+                        console.log(obj.data.data);
+                        if(obj.data.data){
+                            alert("还款成功");
+                            window.location.reload();
+                        }else{
+                            alert("还款失败");
+                        }
+                    })
+                }
 			}
         },
         mounted:function () {

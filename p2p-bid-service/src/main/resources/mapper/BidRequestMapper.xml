@@ -105,4 +105,17 @@
         left join logininfo g on b.createuser_id = g.id
     where b.id=#{id}
   </select>
+
+  <select id="getBidRequestListByCreateUserId" resultMap="bidRequestResultMap">
+    select
+      b.id, b.version, b.bidRequestType, b.bidRequestState, b.bidRequestAmount,b.currentRate,
+      b.monthes2Return, b.bidCount, b.totalRewardAmount, b.currentSum, b.title, b.description,
+      b.disableDate, b.createuser_id, b.disableDays, b.minBidAmount, b.applyTime,b.publishTime, b.returnType ,
+      g.id as g_id,
+      g.username as g_username
+    from
+      bidrequest b
+        left join logininfo g on b.createuser_id = g.id
+    where b.createuser_id=#{id}
+  </select>
 </mapper>
